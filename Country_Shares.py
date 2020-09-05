@@ -25,8 +25,6 @@ aap_by_year = cow_nmc.groupby('year')['aap'].sum().reset_index()
 
 plt.plot(aap_by_year['year'], aap_by_year['aap'])
 
-print(aap_by_year.dtypes)
-print(aap_by_year.head())
 
 # How does this compare to Global GDP (1960-2017)?
 # The WorldBank dataset requires cleaning.
@@ -45,8 +43,6 @@ global_gdp_transposed['aggregate_gdp'] = global_gdp_transposed.sum(axis=1)
 # We need to create the relevant format (i.e. global GDP by year in this case) to make it comparable
 
 
-print(global_gdp_transposed.dtypes)
-print(global_gdp_transposed.head())
 
 # Now we need to merge the data frames.
 
@@ -67,7 +63,8 @@ plt.subplot(1,2,2)
 plt.plot(aap_gdp_merged['year'], aap_gdp_merged['aggregate_gdp'], label="aggregate gdp")
 plt.title("gdp")
 
-plt.show()
 
+
+# Now that we merged the gdp and aap data, we want to look at an individual's country share of the total aap over time
 
 
