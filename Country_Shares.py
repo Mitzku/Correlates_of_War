@@ -5,15 +5,18 @@ import numpy as np
 import re
 
 
-
+#change
 cow_nmc = pd.read_csv('NMC_5_0.csv')
 
 # aap = absolute aggregate power
 
 cow_nmc['aap'] = cow_nmc['milex'] + cow_nmc['milper'] + cow_nmc['irst'] + cow_nmc['pec'] + cow_nmc['tpop'] + cow_nmc['upop']
 
-# First we need to calculate the aggregate power of every country by adding up the six individual power components and dividing them by six.
-# The thesis made use of a relative power index for a group of countries. While this does not allow to adapt the model for other countries, it is first reproduced in step 1
+# First we need to calculate the aggregate power of every country by adding up the six individual
+# power components and dividing them by six.
+
+# The thesis made use of a relative power index for a group of countries.
+# While this does not allow to adapt the model for other countries, it is first reproduced in step 1
 
 
 # General Inquiries
@@ -23,7 +26,7 @@ aap_by_year = cow_nmc.groupby('year')['aap'].sum().reset_index()
 plt.plot(aap_by_year['year'], aap_by_year['aap'])
 
 print(aap_by_year.dtypes)
-
+print(aap_by_year.head())
 
 # How does this compare to Global GDP (1960-2017)?
 # The WorldBank dataset requires cleaning.
@@ -33,15 +36,38 @@ global_gdp = global_gdp.replace('"', '', regex=True)
 global_gdp = global_gdp.rename(columns=lambda x: re.sub('"','',x))
 global_gdd = global_gdp.rename(columns={'ï»¿Country Name':'Year'}, inplace=True)
 global_gdp = global_gdp.drop(['Country Code', 'Indicator Name', 'Indicator Code'], axis=1)
-global_gdp_transposed= global_gdp.set_index('Year').T
+global_gdp_transposed = global_gdp.set_index('Year').T
+global_gdp_transposed = global_gdp_transposed.reset_index()
 cols = global_gdp_transposed.columns.tolist()
 global_gdp_transposed[cols] = global_gdp_transposed[cols].apply(pd.to_numeric, errors='coerce', axis=1)
-
+global_gdp_transposed['aggregate_gdp'] = global_gdp_transposed.sum(axis=1)
 
 # We need to create the relevant format (i.e. global GDP by year in this case) to make it comparable
 
-global_gdp_transposed['aggregate_gdp'] = global_gdp_transposed.sum(axis=1)
 
+print(global_gdp_transposed.dtypes)
+print(global_gdp_transposed.head())
+
+# Now we need to merge the data frames.
+
+aap_gdp_merged = pd.merge(
+    aap_by_year,
+    global_gdp_transposed,
+    left_on='year',
+    right_on='index'
+)
+
+print(aap_gdp_merged.head())
+
+plt.subplot(1,2,1)
+plt.plot(aap_gdp_merged['year'], aap_gdp_merged['aap'], label="aap")
+plt.title("aap")
+
+plt.subplot(1,2,2)
+plt.plot(aap_gdp_merged['year'], aap_gdp_merged['aggregate_gdp'], label="aggregate gdp")
+plt.title("gdp")
 
 plt.show()
+
+
 
