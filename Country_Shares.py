@@ -42,7 +42,9 @@ global_gdp_transposed['aggregate_gdp'] = global_gdp_transposed.sum(axis=1)
 
 # We need to create the relevant format (i.e. global GDP by year in this case) to make it comparable
 
-
+###### !!!! Could be better to do this using .melt ? TRY!!!!!
+###### ALSO df.reps = pd.to_numeric(split_df[1]) might be a good tool to do the to_numeric transformation
+#
 
 # Now we need to merge the data frames.
 
